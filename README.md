@@ -22,7 +22,7 @@ provider.getMany('posts')
 | `getOne`        | `GET http://my.api.url/:resource/:id`                      |
 | `createOne`     | `POST http://my.api.url/:resource`                         |
 | `updateOne`     | `PATCH http://my.api.url/:resource/:id`                    |
-| `deleteOne`     | `DELETE http://my.api.url/:resources/:id`                  |
+| `deleteOne`     | `DELETE http://my.api.url/:resource/:id`                  |
 
 ## Test
 
