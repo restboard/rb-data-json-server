@@ -1,39 +1,51 @@
+import fetch from 'node-fetch'
+
 class RbDataJsonServerProvider {
-  constructor (baseURL) {
-    this.baseURL = baseURL
+  constructor (apiURL) {
+    this.apiURL = apiURL
   }
 
-  async getList (params) {
+  async getMany (resource) {
+    const url = `${this.apiURL}/${resource}`
+    const res = await fetch(url, {
+      method: 'GET'
+    })
+    if (!res.ok) {
+      throw new Error(res.statusText)
+    }
+    return {
+      data: await res.json()
+    }
+  }
+
+  async getOne(resource, { id }) {
+    const url = `${this.apiURL}/${resource}/${id}`
+    const res = await fetch(url, {
+      method: 'GET'
+    })
+    if (!res.ok) {
+      throw new Error(res.statusText)
+    }
+    return {
+      data: await res.json()
+    }
+  }
+
+  async createOne(resource) {
     return {}
   }
 
-  async getOne(params) {
+  async updateOne(resource) {
     return {}
   }
 
-  async getMany(params) {
-    return {}
-  }
-
-  async create(params) {
-    return {}
-  }
-
-  async update(params) {
-    return {}
-  }
-
-  async updateMany(params) {
-    return {}
-  }
-
-  async delete(params) {
+  async deleteOne(resource) {
     return {}
   }
 }
 
-function createProvider(opts) {
-  return new RbDataJsonServerProvider(...opts)
+function createProvider(apiURL) {
+  return new RbDataJsonServerProvider(apiURL)
 }
 
 export default createProvider
