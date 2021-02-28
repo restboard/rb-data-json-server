@@ -27,6 +27,18 @@ const posts = await provider.getList('posts')
 npm test
 ```
 
+## Contribute
+
+If you want, you can also freely donate to fund the project development:
+
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://paypal.me/EBertoldi)
+
+## Have you found a bug?
+
+Please open a new issue on:
+
+https://github.com/zuck/rb-data-json-server/issues
+
 ## Acknowledgements
 
 This project is inspired by:
