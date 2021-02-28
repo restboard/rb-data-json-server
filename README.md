@@ -8,18 +8,18 @@ A [Restboard](https://github.com/zuck/restboard) data provider for JSON REST ser
 import jsonServerDataProvider from 'rb-data-json-server'
 
 const provider = jsonServerDataProvider('https://jsonplaceholder.typicode.com')
-const posts = await provider.getList('posts')
+const posts = await provider.getMany('posts')
 ```
 
 ## REST Dialect
 
 | Method          | API call                                                   |
 | --------------- | ---------------------------------------------------------- |
-| `getMany`       | `GET http://my.api.url/resource`                           |
-| `getOne`        | `GET http://my.api.url/resource/:id`                       |
-| `createOne`     | `POST http://my.api.url/resource`                          |
-| `updateOne`     | `PATCH http://my.api.url/resource/:id`                     |
-| `deleteOne`     | `DELETE http://my.api.url/resources/:id`                   |
+| `getMany`       | `GET http://my.api.url/:resource`                          |
+| `getOne`        | `GET http://my.api.url/:resource/:id`                      |
+| `createOne`     | `POST http://my.api.url/:resource`                         |
+| `updateOne`     | `PATCH http://my.api.url/:resource/:id`                    |
+| `deleteOne`     | `DELETE http://my.api.url/:resources/:id`                  |
 
 ## Test
 
