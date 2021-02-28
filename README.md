@@ -8,7 +8,10 @@ A [Restboard](https://github.com/zuck/restboard) data provider for JSON REST ser
 import jsonServerDataProvider from 'rb-data-json-server'
 
 const provider = jsonServerDataProvider('https://jsonplaceholder.typicode.com')
-const posts = await provider.getMany('posts')
+
+provider.getMany('posts')
+  .then(posts => console.log(posts))
+  .catch(err => console.error(err))
 ```
 
 ## REST Dialect
