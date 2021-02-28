@@ -1,0 +1,27 @@
+{
+    "name": "rb-data-json-server",
+    "version": "0.0.1",
+    "description": "A Restboard data provider for JSON REST server",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/zuck/rb-data-json-server.git"
+    },
+    "keywords": [
+        "REST",
+        "JSON",
+        "server",
+        "data",
+        "provider",
+        "restboard"
+    ],
+    "author": "Emanuele Bertoldi <emanuele.bertoldi@gmail.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/zuck/rb-data-json-server/issues"
+    },
+    "homepage": "https://github.com/zuck/rb-data-json-server#readme"
+}
