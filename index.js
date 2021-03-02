@@ -31,16 +31,52 @@ class RbDataJsonServerProvider {
     }
   }
 
-  async createOne(resource) {
-    return {}
+  async createOne(resource, data) {
+    const { id, ...attrs } = data
+    const url = `${this.apiURL}/${resource}`
+    const res = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(attrs),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    })
+    if (!res.ok) {
+      throw new Error(res.statusText)
+    }
+    return {
+      data: await res.json()
+    }
   }
 
-  async updateOne(resource) {
-    return {}
+  async updateOne(resource, { id, ...data }) {
+    const url = `${this.apiURL}/${resource}/${id}`
+    const res = await fetch(url, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    })
+    if (!res.ok) {
+      throw new Error(res.statusText)
+    }
+    return {
+      data: await res.json()
+    }
   }
 
-  async deleteOne(resource) {
-    return {}
+  async deleteOne(resource, { id }) {
+    const url = `${this.apiURL}/${resource}/${id}`
+    const res = await fetch(url, {
+      method: 'DELETE'
+    })
+    if (!res.ok) {
+      throw new Error(res.statusText)
+    }
+    return {
+      data: { id }
+    }
   }
 }
 
