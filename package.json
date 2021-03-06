@@ -1,5 +1,5 @@
 {
-  "name": "rb-data-json-server",
+  "name": "rb-data-provider-json-server",
   "version": "0.2.0",
   "description": "A Restboard data provider for JSON REST server",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/restboard/rb-data-json-server.git"
+    "url": "git+https://github.com/restboard/rb-data-provider-json-server.git"
   },
   "keywords": [
     "REST",
@@ -21,9 +21,9 @@
   "author": "Emanuele Bertoldi <emanuele.bertoldi@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/restboard/rb-data-json-server/issues"
+    "url": "https://github.com/restboard/rb-data-provider-json-server/issues"
   },
-  "homepage": "https://github.com/restboard/rb-data-json-server#readme",
+  "homepage": "https://github.com/restboard/rb-data-provider-json-server#readme",
   "dependencies": {
     "node-fetch": "^2.6.1"
   },

@@ -1,11 +1,11 @@
-# rb-data-json-server
+# rb-data-provider-json-server
 
 A [Restboard](https://github.com/restboard/restboard) data provider for JSON REST server
 
 ## Getting started
 
 ```js
-import jsonServerDataProvider from 'rb-data-json-server'
+import jsonServerDataProvider from 'rb-data-provider-json-server'
 
 const provider = jsonServerDataProvider('https://jsonplaceholder.typicode.com')
 
@@ -40,7 +40,7 @@ If you want, you can also freely donate to fund the project development:
 
 Please open a new issue on:
 
-https://github.com/restboard/rb-data-json-server/issues
+https://github.com/restboard/rb-data-provider-json-server/issues
 
 ## Acknowledgements
 
