@@ -1,7 +1,9 @@
 import fetch from 'node-fetch'
+import { RbDataProvider } from 'rb-core'
 
-class RbDataJsonServerProvider {
+class RbDataJsonServerProvider extends RbDataProvider {
   constructor (apiURL) {
+    super()
     this.apiURL = apiURL
   }
 
@@ -18,7 +20,7 @@ class RbDataJsonServerProvider {
     }
   }
 
-  async getOne(resource, { id }) {
+  async getOne (resource, { id }) {
     const url = `${this.apiURL}/${resource}/${id}`
     const res = await fetch(url, {
       method: 'GET'
@@ -31,14 +33,14 @@ class RbDataJsonServerProvider {
     }
   }
 
-  async createOne(resource, data) {
+  async createOne (resource, data) {
     const { id, ...attrs } = data
     const url = `${this.apiURL}/${resource}`
     const res = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(attrs),
       headers: {
-        "Content-type": "application/json; charset=UTF-8"
+        'Content-type': 'application/json; charset=UTF-8'
       }
     })
     if (!res.ok) {
@@ -49,13 +51,13 @@ class RbDataJsonServerProvider {
     }
   }
 
-  async updateOne(resource, { id, ...data }) {
+  async updateOne (resource, { id, ...data }) {
     const url = `${this.apiURL}/${resource}/${id}`
     const res = await fetch(url, {
       method: 'PATCH',
       body: JSON.stringify(data),
       headers: {
-        "Content-type": "application/json; charset=UTF-8"
+        'Content-type': 'application/json; charset=UTF-8'
       }
     })
     if (!res.ok) {
@@ -66,7 +68,7 @@ class RbDataJsonServerProvider {
     }
   }
 
-  async deleteOne(resource, { id }) {
+  async deleteOne (resource, { id }) {
     const url = `${this.apiURL}/${resource}/${id}`
     const res = await fetch(url, {
       method: 'DELETE'
@@ -80,7 +82,7 @@ class RbDataJsonServerProvider {
   }
 }
 
-function createProvider(apiURL) {
+function createProvider (apiURL) {
   return new RbDataJsonServerProvider(apiURL)
 }
 
