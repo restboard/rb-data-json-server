@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { RbDataProvider } from 'rb-core'
+import { RbDataProvider } from 'rb-core-module'
 
 class RbDataJsonServerProvider extends RbDataProvider {
   constructor (apiURL) {

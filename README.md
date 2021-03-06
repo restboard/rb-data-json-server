@@ -1,6 +1,6 @@
 # rb-data-json-server
 
-A [Restboard](https://github.com/zuck/restboard) data provider for JSON REST server
+A [Restboard](https://github.com/restboard/restboard) data provider for JSON REST server
 
 ## Getting started
 
@@ -40,7 +40,7 @@ If you want, you can also freely donate to fund the project development:
 
 Please open a new issue on:
 
-https://github.com/zuck/rb-data-json-server/issues
+https://github.com/restboard/rb-data-json-server/issues
 
 ## Acknowledgements
 
