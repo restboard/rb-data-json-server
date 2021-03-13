@@ -28,7 +28,7 @@
     "node-fetch": "^2.6.1"
   },
   "peerDependencies": {
-    "rb-core-module": "^0.2.1"
+    "rb-core-module": "^0.3.0"
   },
   "devDependencies": {
     "tap": "^14.11.0"
