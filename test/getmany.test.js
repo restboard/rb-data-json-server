@@ -1,5 +1,5 @@
 import * as t from "tap";
-import createProvider from "../index";
+import createProvider from "../src/index";
 
 t.test("getMany", async (t) => {
   t.test("without params", async (t) => {
