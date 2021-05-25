@@ -1,117 +1,117 @@
-import fetch from "node-fetch";
-import { RbDataProvider } from "rb-core-module";
+import fetch from 'node-fetch'
+import { RbDataProvider } from 'rb-core-module'
 
-function _createQuerystring(filters, sort, order, offset, limit) {
-  let params = [];
+function _createQuerystring (filters, sort, order, offset, limit) {
+  const params = []
   if (filters) {
     for (const key in filters) {
-      params.push(`${key}=${filters[key]}`);
+      params.push(`${key}=${filters[key]}`)
     }
   }
   if (sort) {
-    const _sort = Array.isArray(sort) ? sort.join(",") : sort;
-    params.push(`_sort=${_sort}`);
+    const _sort = Array.isArray(sort) ? sort.join(',') : sort
+    params.push(`_sort=${_sort}`)
   }
   if (order) {
-    params.push(`_order=${order}`);
+    params.push(`_order=${order}`)
   }
   if (offset) {
-    params.push(`_start=${offset}`);
+    params.push(`_start=${offset}`)
   }
   if (limit) {
-    params.push(`_limit=${limit}`);
+    params.push(`_limit=${limit}`)
   }
-  return params.join("&");
+  return params.join('&')
 }
 
 class RbDataJsonServerProvider extends RbDataProvider {
-  constructor(apiURL) {
-    super();
-    this.apiURL = apiURL;
+  constructor (apiURL) {
+    super()
+    this.apiURL = apiURL
   }
 
-  async getMany(
+  async getMany (
     resource,
-    { filters = {}, sort = "", order = "", offset = 0, limit = null } = {}
+    { filters = {}, sort = '', order = '', offset = 0, limit = null } = {}
   ) {
-    const base = `${this.apiURL}/${resource}`;
-    const qs = _createQuerystring(filters, sort, order, offset, limit);
-    const url = [base, qs].filter((v) => v).join("?");
+    const base = `${this.apiURL}/${resource}`
+    const qs = _createQuerystring(filters, sort, order, offset, limit)
+    const url = [base, qs].filter((v) => v).join('?')
     const res = await fetch(url, {
-      method: "GET",
-    });
+      method: 'GET'
+    })
     if (!res.ok) {
-      throw new Error(res.statusText);
+      throw new Error(res.statusText)
     }
     return {
-      data: await res.json(),
-    };
+      data: await res.json()
+    }
   }
 
-  async getOne(resource, { id }) {
-    const url = `${this.apiURL}/${resource}/${id}`;
+  async getOne (resource, { id }) {
+    const url = `${this.apiURL}/${resource}/${id}`
     const res = await fetch(url, {
-      method: "GET",
-    });
+      method: 'GET'
+    })
     if (!res.ok) {
-      throw new Error(res.statusText);
+      throw new Error(res.statusText)
     }
     return {
-      data: await res.json(),
-    };
+      data: await res.json()
+    }
   }
 
-  async createOne(resource, data) {
-    const { id, ...attrs } = data;
-    const url = `${this.apiURL}/${resource}`;
+  async createOne (resource, data) {
+    const { id, ...attrs } = data
+    const url = `${this.apiURL}/${resource}`
     const res = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify(attrs),
       headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    });
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
     if (!res.ok) {
-      throw new Error(res.statusText);
+      throw new Error(res.statusText)
     }
     return {
-      data: await res.json(),
-    };
+      data: await res.json()
+    }
   }
 
-  async updateOne(resource, { id, ...data }) {
-    const url = `${this.apiURL}/${resource}/${id}`;
+  async updateOne (resource, { id, ...data }) {
+    const url = `${this.apiURL}/${resource}/${id}`
     const res = await fetch(url, {
-      method: "PATCH",
+      method: 'PATCH',
       body: JSON.stringify(data),
       headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    });
+        'Content-type': 'application/json; charset=UTF-8'
+      }
+    })
     if (!res.ok) {
-      throw new Error(res.statusText);
+      throw new Error(res.statusText)
     }
     return {
-      data: await res.json(),
-    };
+      data: await res.json()
+    }
   }
 
-  async deleteOne(resource, { id }) {
-    const url = `${this.apiURL}/${resource}/${id}`;
+  async deleteOne (resource, { id }) {
+    const url = `${this.apiURL}/${resource}/${id}`
     const res = await fetch(url, {
-      method: "DELETE",
-    });
+      method: 'DELETE'
+    })
     if (!res.ok) {
-      throw new Error(res.statusText);
+      throw new Error(res.statusText)
     }
     return {
-      data: { id },
-    };
+      data: { id }
+    }
   }
 }
 
-function createProvider(apiURL) {
-  return new RbDataJsonServerProvider(apiURL);
+function createProvider (apiURL) {
+  return new RbDataJsonServerProvider(apiURL)
 }
 
-export default createProvider;
+export default createProvider
