@@ -5,13 +5,23 @@ A [Restboard](https://github.com/restboard/restboard) data provider for JSON RES
 ## Getting started
 
 ```js
-import jsonServerDataProvider from 'rb-data-provider-json-server'
+import createJsonServerDataProvider from 'rb-data-provider-json-server'
 
-const provider = jsonServerDataProvider('https://jsonplaceholder.typicode.com')
+const provider = createJsonServerDataProvider('https://jsonplaceholder.typicode.com')
 
 provider.getMany('posts')
   .then(posts => console.log(posts))
   .catch(err => console.error(err))
+```
+
+Additional options can be configured during the data provider construction:
+
+```js
+const provider = createJsonServerDataProvider('https://jsonplaceholder.typicode.com', {
+  timeout: 3000,
+  retries: 5,
+  backoff: 300
+})
 ```
 
 ## REST Dialect
@@ -22,7 +32,16 @@ provider.getMany('posts')
 | `getOne`        | `GET http://my.api.url/:resource/:id`                      |
 | `createOne`     | `POST http://my.api.url/:resource`                         |
 | `updateOne`     | `PATCH http://my.api.url/:resource/:id`                    |
-| `deleteOne`     | `DELETE http://my.api.url/:resource/:id`                  |
+| `deleteOne`     | `DELETE http://my.api.url/:resource/:id`                   |
+
+## Options
+
+| Name            | Description                                           | Default |
+| --------------- | ------------------------------------------------------| ------- |
+| `timeout`       | The timeout (ms) for each single HTTP request attempt | 5000    |
+| `retries`       | The number of attempts before failing                 | 3       |
+| `backoff`       | The incremental delay (ms) between request attempts   | 300     |
+| `client`        | The HTTP client used to perform the requests          | `fetch` |
 
 ## Test
 
@@ -40,7 +59,7 @@ If you want, you can also freely donate to fund the project development:
 
 Please open a new issue on:
 
-https://github.com/restboard/rb-data-provider-json-server/issues
+<https://github.com/restboard/rb-data-provider-json-server/issues>
 
 ## Acknowledgements
 

@@ -1,6 +1,8 @@
 import fetch from 'node-fetch'
 import { RbDataProvider } from 'rb-core-module'
 
+const retryCodes = [408, 500, 502, 503, 504, 522, 524]
+
 function _createQuerystring (filters, sort, order, offset, limit) {
   const params = []
   if (filters) {
@@ -25,9 +27,13 @@ function _createQuerystring (filters, sort, order, offset, limit) {
 }
 
 class RbDataJsonServerProvider extends RbDataProvider {
-  constructor (apiURL) {
+  constructor (apiURL, { timeout, retries, backoff, client } = {}) {
     super()
     this.apiURL = apiURL
+    this.timeout = timeout || 5000
+    this.retries = retries || 3
+    this.backoff = backoff || 300
+    this.client = client || fetch
   }
 
   async getMany (
@@ -37,81 +43,91 @@ class RbDataJsonServerProvider extends RbDataProvider {
     const base = `${this.apiURL}/${resource}`
     const qs = _createQuerystring(filters, sort, order, offset, limit)
     const url = [base, qs].filter((v) => v).join('?')
-    const res = await fetch(url, {
+    const res = await this._performRequest(url, {
       method: 'GET'
-    })
-    if (!res.ok) {
-      throw new Error(res.statusText)
-    }
+    }, this.retries)
     return {
-      data: await res.json()
+      data: res
     }
   }
 
   async getOne (resource, { id }) {
     const url = `${this.apiURL}/${resource}/${id}`
-    const res = await fetch(url, {
+    const res = await this._performRequest(url, {
       method: 'GET'
-    })
-    if (!res.ok) {
-      throw new Error(res.statusText)
-    }
+    }, this.retries)
     return {
-      data: await res.json()
+      data: res
     }
   }
 
   async createOne (resource, data) {
     const { id, ...attrs } = data
     const url = `${this.apiURL}/${resource}`
-    const res = await fetch(url, {
+    const res = await this._performRequest(url, {
       method: 'POST',
       body: JSON.stringify(attrs),
       headers: {
         'Content-type': 'application/json; charset=UTF-8'
       }
-    })
-    if (!res.ok) {
-      throw new Error(res.statusText)
-    }
+    }, this.retries)
     return {
-      data: await res.json()
+      data: res
     }
   }
 
   async updateOne (resource, { id, ...data }) {
     const url = `${this.apiURL}/${resource}/${id}`
-    const res = await fetch(url, {
+    const res = await this._performRequest(url, {
       method: 'PATCH',
       body: JSON.stringify(data),
       headers: {
         'Content-type': 'application/json; charset=UTF-8'
       }
-    })
-    if (!res.ok) {
-      throw new Error(res.statusText)
-    }
+    }, this.retries)
     return {
-      data: await res.json()
+      data: res
     }
   }
 
   async deleteOne (resource, { id }) {
     const url = `${this.apiURL}/${resource}/${id}`
-    const res = await fetch(url, {
+    await this._performRequest(url, {
       method: 'DELETE'
-    })
-    if (!res.ok) {
-      throw new Error(res.statusText)
-    }
+    }, this.retries)
     return {
       data: { id }
     }
   }
+
+  async _performRequest (url, options, retries, backoff) {
+    const _backoff = backoff || this.backoff
+    const res = await this.client(url, {
+      timeout: this.timeout,
+      ...options
+    })
+    if (!res.ok) {
+      if (retries > 0 && retryCodes.includes(res.status)) {
+        return new Promise((resolve, reject) => {
+          setTimeout(async () => {
+            try {
+              const res = await this._performRequest(url, options, retries - 1, _backoff * 2)
+              resolve(res)
+            } catch (err) {
+              reject(err)
+            }
+          }, _backoff)
+        })
+      } else {
+        throw new Error(res.statusText)
+      }
+    }
+    return res.json()
+  }
 }
 
-function createProvider (apiURL) {
-  return new RbDataJsonServerProvider(apiURL)
+function createProvider (apiURL, opts) {
+  return new RbDataJsonServerProvider(apiURL, opts)
 }
 
 export default createProvider
