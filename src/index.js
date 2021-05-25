@@ -33,7 +33,7 @@ class RbDataJsonServerProvider extends RbDataProvider {
     this.timeout = timeout || 5000
     this.retries = retries || 3
     this.backoff = backoff || 300
-    this.client = client || fetch
+    this.client = client || ((...args) => fetch(...args))
   }
 
   async getMany (
