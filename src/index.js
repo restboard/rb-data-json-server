@@ -107,7 +107,7 @@ class RbDataJsonServerProvider extends RbDataProvider {
       ...options
     })
     if (!res.ok) {
-      if (retries > 0 && retryCodes.includes(res.status)) {
+      if (retries > 1 && retryCodes.includes(res.status)) {
         return new Promise((resolve, reject) => {
           setTimeout(async () => {
             try {
