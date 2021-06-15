@@ -7,7 +7,17 @@ function _createQuerystring (filters, sort, order, offset, limit) {
   const params = []
   if (filters) {
     for (const key in filters) {
-      params.push(`${key}=${filters[key]}`)
+      const filterValue = filters[key]
+      let values = [filterValue]
+      if (Array.isArray(filterValue)) {
+        values = filterValue
+      } else if (
+        filterValue !== null &&
+        typeof filterValue === 'object'
+      ) {
+        values = Object.keys(filterValue).filter(val => !!filterValue[val])
+      }
+      values.forEach(val => params.push(`${key}=${val}`))
     }
   }
   if (sort) {

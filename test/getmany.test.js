@@ -16,6 +16,24 @@ t.test('getMany', async (t) => {
     })
     t.equal(res.data.length, 5, 'should return only matching results')
   })
+  t.test('with filter as array', async (t) => {
+    const provider = createProvider('https://jsonplaceholder.typicode.com')
+    const res = await provider.getMany('comments', {
+      filters: {
+        postId: [1, 2]
+      }
+    })
+    t.equal(res.data.length, 10, 'should return only matching results')
+  })
+  t.test('with filter as object', async (t) => {
+    const provider = createProvider('https://jsonplaceholder.typicode.com')
+    const res = await provider.getMany('comments', {
+      filters: {
+        postId: { 1: true, 2: true, 3: false }
+      }
+    })
+    t.equal(res.data.length, 10, 'should return only matching results')
+  })
   t.test('with sorting', async (t) => {
     const provider = createProvider('https://jsonplaceholder.typicode.com')
     const res = await provider.getMany('posts', {
