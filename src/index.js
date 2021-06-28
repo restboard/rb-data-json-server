@@ -114,7 +114,11 @@ class RbDataJsonServerProvider extends RbDataProvider {
     const _backoff = backoff || this.backoff
     const res = await this.client(url, {
       timeout: this.timeout,
-      ...options
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
     })
     if (!res.ok) {
       if (retries > 1 && retryCodes.includes(res.status)) {
