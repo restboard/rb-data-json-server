@@ -76,10 +76,7 @@ class RbDataJsonServerProvider extends RbDataProvider {
     const url = `${this.apiURL}/${resource}`
     const res = await this._performRequest(url, {
       method: 'POST',
-      body: JSON.stringify(attrs),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8'
-      }
+      body: JSON.stringify(attrs)
     }, this.retries)
     return {
       data: res
@@ -90,10 +87,7 @@ class RbDataJsonServerProvider extends RbDataProvider {
     const url = `${this.apiURL}/${resource}/${id}`
     const res = await this._performRequest(url, {
       method: 'PATCH',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8'
-      }
+      body: JSON.stringify(data)
     }, this.retries)
     return {
       data: res
@@ -116,7 +110,7 @@ class RbDataJsonServerProvider extends RbDataProvider {
       timeout: this.timeout,
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
         ...options.headers
       }
     })
