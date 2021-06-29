@@ -38,6 +38,7 @@ const provider = createJsonServerDataProvider('https://jsonplaceholder.typicode.
 
 | Name            | Description                                           | Default   |
 | ----------------| ------------------------------------------------------| ----------|
+| `responseRoot`  | The root from where to extract the response payload   | undefined |
 | `timeout`       | The timeout (ms) for each single HTTP request attempt | 5000      |
 | `retries`       | The number of attempts before failing                 | 3         |
 | `backoff`       | The incremental delay (ms) between request attempts   | 300       |
