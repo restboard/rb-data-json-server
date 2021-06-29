@@ -37,19 +37,29 @@ function _createQuerystring (filters, sort, order, offset, limit) {
 }
 
 class RbDataJsonServerProvider extends RbDataProvider {
-  constructor (apiURL, { timeout, retries, backoff, client } = {}) {
+  constructor (apiURL, {
+    timeout,
+    retries,
+    backoff,
+    client,
+    tokenGetter
+  } = {}) {
     super()
     this.apiURL = apiURL
     this.timeout = timeout || 5000
     this.retries = retries || 3
     this.backoff = backoff || 300
     this.client = client || ((...args) => fetch(...args))
+    this.getToken = tokenGetter || (() => undefined)
   }
 
-  async getMany (
-    resource,
-    { filters = {}, sort = '', order = '', offset = 0, limit = null } = {}
-  ) {
+  async getMany (resource, {
+    filters = {},
+    sort = '',
+    order = '',
+    offset = 0,
+    limit = null
+  } = {}) {
     const base = `${this.apiURL}/${resource}`
     const qs = _createQuerystring(filters, sort, order, offset, limit)
     const url = [base, qs].filter((v) => v).join('?')
@@ -106,11 +116,13 @@ class RbDataJsonServerProvider extends RbDataProvider {
 
   async _performRequest (url, options, retries, backoff) {
     const _backoff = backoff || this.backoff
+    const _token = await this.getToken()
     const res = await this.client(url, {
       timeout: this.timeout,
       ...options,
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
+        Authorization: _token && `Bearer ${_token}`,
         ...options.headers
       }
     })

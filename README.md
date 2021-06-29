@@ -36,12 +36,13 @@ const provider = createJsonServerDataProvider('https://jsonplaceholder.typicode.
 
 ## Options
 
-| Name            | Description                                           | Default |
-| --------------- | ------------------------------------------------------| ------- |
-| `timeout`       | The timeout (ms) for each single HTTP request attempt | 5000    |
-| `retries`       | The number of attempts before failing                 | 3       |
-| `backoff`       | The incremental delay (ms) between request attempts   | 300     |
-| `client`        | The HTTP client used to perform the requests          | `fetch` |
+| Name            | Description                                           | Default   |
+| ----------------| ------------------------------------------------------| ----------|
+| `timeout`       | The timeout (ms) for each single HTTP request attempt | 5000      |
+| `retries`       | The number of attempts before failing                 | 3         |
+| `backoff`       | The incremental delay (ms) between request attempts   | 300       |
+| `client`        | The HTTP client used to perform the requests          | `fetch`   |
+| `tokenGetter`   | An async function to get the bearer token to be used  | undefined |
 
 ## Test
 
