@@ -3,7 +3,7 @@ import { RbDataProvider } from 'rb-core-module'
 
 const retryCodes = [408, 500, 502, 503, 504, 522, 524]
 
-function _createQuerystring (filters, sort, order, offset, limit) {
+function _renderQuerystring (filters, sort, order, offset, limit) {
   const params = []
   if (filters) {
     for (const key in filters) {
@@ -43,7 +43,8 @@ class RbDataProviderJsonServer extends RbDataProvider {
     backoff,
     client,
     tokenGetter,
-    responseParser
+    responseParser,
+    querystringRenderer
   } = {}) {
     super()
     this.apiURL = apiURL
@@ -53,6 +54,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
     this.client = client || ((...args) => fetch(...args))
     this.getToken = tokenGetter || (() => undefined)
     this.parseResponse = responseParser || (res => res.data || res)
+    this.renderQuerystring = querystringRenderer || _renderQuerystring
   }
 
   async getMany (resource, {
@@ -63,7 +65,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
     limit = null
   } = {}) {
     const base = `${this.apiURL}/${resource}`
-    const qs = _createQuerystring(filters, sort, order, offset, limit)
+    const qs = this.renderQuerystring(filters, sort, order, offset, limit)
     const url = [base, qs].filter((v) => v).join('?')
     const res = await this._performRequest(url, {
       method: 'GET'
