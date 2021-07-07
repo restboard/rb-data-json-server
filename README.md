@@ -5,9 +5,9 @@ A [Restboard](https://github.com/restboard/restboard) data provider for JSON RES
 ## Getting started
 
 ```js
-import createJsonServerDataProvider from 'rb-data-provider-json-server'
+import createProvider from 'rb-data-provider-json-server'
 
-const provider = createJsonServerDataProvider('https://jsonplaceholder.typicode.com')
+const provider = createProvider('https://jsonplaceholder.typicode.com')
 
 provider.getMany('posts')
   .then(posts => console.log(posts))

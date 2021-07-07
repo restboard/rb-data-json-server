@@ -36,7 +36,7 @@ function _createQuerystring (filters, sort, order, offset, limit) {
   return params.join('&')
 }
 
-class RbDataJsonServerProvider extends RbDataProvider {
+class RbDataProviderJsonServer extends RbDataProvider {
   constructor (apiURL, {
     timeout,
     retries,
@@ -149,7 +149,7 @@ class RbDataJsonServerProvider extends RbDataProvider {
 }
 
 function createProvider (apiURL, opts) {
-  return new RbDataJsonServerProvider(apiURL, opts)
+  return new RbDataProviderJsonServer(apiURL, opts)
 }
 
 export default createProvider
