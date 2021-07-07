@@ -38,21 +38,21 @@ function _createQuerystring (filters, sort, order, offset, limit) {
 
 class RbDataJsonServerProvider extends RbDataProvider {
   constructor (apiURL, {
-    responseRoot,
     timeout,
     retries,
     backoff,
     client,
-    tokenGetter
+    tokenGetter,
+    responseParser
   } = {}) {
     super()
     this.apiURL = apiURL
-    this.responseRoot = responseRoot
     this.timeout = timeout || 5000
     this.retries = retries || 3
     this.backoff = backoff || 300
     this.client = client || ((...args) => fetch(...args))
     this.getToken = tokenGetter || (() => undefined)
+    this.parseResponse = responseParser || (res => res.data || res)
   }
 
   async getMany (resource, {
@@ -69,7 +69,7 @@ class RbDataJsonServerProvider extends RbDataProvider {
       method: 'GET'
     }, this.retries)
     return {
-      data: this._extractResponse(res)
+      data: this.parseResponse(res)
     }
   }
 
@@ -79,7 +79,7 @@ class RbDataJsonServerProvider extends RbDataProvider {
       method: 'GET'
     }, this.retries)
     return {
-      data: this._extractResponse(res)
+      data: this.parseResponse(res)
     }
   }
 
@@ -91,7 +91,7 @@ class RbDataJsonServerProvider extends RbDataProvider {
       body: JSON.stringify(attrs)
     }, this.retries)
     return {
-      data: this._extractResponse(res)
+      data: this.parseResponse(res)
     }
   }
 
@@ -102,7 +102,7 @@ class RbDataJsonServerProvider extends RbDataProvider {
       body: JSON.stringify(data)
     }, this.retries)
     return {
-      data: this._extractResponse(res)
+      data: this.parseResponse(res)
     }
   }
 
@@ -145,10 +145,6 @@ class RbDataJsonServerProvider extends RbDataProvider {
       }
     }
     return res.json()
-  }
-
-  _extractResponse (res) {
-    return this.responseRoot ? res[this.responseRoot] : res
   }
 }
 
