@@ -36,6 +36,21 @@ function _renderQuerystring (filters, sort, order, offset, limit) {
   return params.join('&')
 }
 
+async function _defaultClient (url, options) {
+  const opts = { ...options }
+  const contentType = opts.headers && opts.headers['Content-Type']
+  const shouldBodyBeString = (
+    !contentType ||
+    contentType.startsWith('application/json') ||
+    contentType.startsWith('text/')
+  )
+  const isBodyString = typeof opts.body === 'string'
+  if (shouldBodyBeString && !isBodyString && opts.body) {
+    opts.body = JSON.stringify(opts.body)
+  }
+  return fetch(url, opts)
+}
+
 class RbDataProviderJsonServer extends RbDataProvider {
   constructor (apiURL, {
     timeout,
@@ -51,10 +66,10 @@ class RbDataProviderJsonServer extends RbDataProvider {
     this.timeout = timeout || 5000
     this.retries = retries || 3
     this.backoff = backoff || 300
-    this.client = client || ((...args) => fetch(...args))
     this.getToken = tokenGetter || (() => undefined)
     this.parseResponse = responseParser || (res => res.data || res)
     this.renderQuerystring = querystringRenderer || _renderQuerystring
+    this.client = client || _defaultClient
   }
 
   async getMany (resource, {
@@ -119,7 +134,6 @@ class RbDataProviderJsonServer extends RbDataProvider {
   }
 
   async _performRequest (url, options, retries, backoff) {
-    const _opts = { ...options }
     const _backoff = backoff || this.backoff
     const _token = await this.getToken()
     const _headers = {
@@ -127,13 +141,9 @@ class RbDataProviderJsonServer extends RbDataProvider {
       Authorization: _token && `Bearer ${_token}`,
       ...options.headers
     }
-    const _contentType = _headers['Content-Type']
-    if (_contentType.startsWith('application/json')) {
-      _opts.body = JSON.stringify(_opts.body)
-    }
     const res = await this.client(url, {
       timeout: this.timeout,
-      ..._opts,
+      ...options,
       headers: _headers
     })
     if (!res.ok) {
