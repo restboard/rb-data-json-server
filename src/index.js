@@ -123,6 +123,17 @@ class RbDataProviderJsonServer extends RbDataProvider {
     }
   }
 
+  async updateMany (resource, data) {
+    const url = `${this.apiURL}/${resource}`
+    const res = await this._performRequest(url, {
+      method: 'PATCH',
+      body: data
+    }, this.retries)
+    return {
+      data: this.parseResponse(res)
+    }
+  }
+
   async deleteOne (resource, { id }) {
     const url = `${this.apiURL}/${resource}/${id}`
     await this._performRequest(url, {
