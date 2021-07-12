@@ -90,7 +90,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
     const url = `${this.apiURL}/${resource}`
     const res = await this._performRequest(url, {
       method: 'POST',
-      body: JSON.stringify(attrs)
+      body: attrs
     }, this.retries)
     return {
       data: this.parseResponse(res)
@@ -101,7 +101,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
     const url = `${this.apiURL}/${resource}/${id}`
     const res = await this._performRequest(url, {
       method: 'PATCH',
-      body: JSON.stringify(data)
+      body: data
     }, this.retries)
     return {
       data: this.parseResponse(res)
@@ -119,16 +119,22 @@ class RbDataProviderJsonServer extends RbDataProvider {
   }
 
   async _performRequest (url, options, retries, backoff) {
+    const _opts = { ...options }
     const _backoff = backoff || this.backoff
     const _token = await this.getToken()
+    const _headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      Authorization: _token && `Bearer ${_token}`,
+      ...options.headers
+    }
+    const _contentType = _headers['Content-Type']
+    if (_contentType.startsWith('application/json')) {
+      _opts.body = JSON.stringify(_opts.body)
+    }
     const res = await this.client(url, {
       timeout: this.timeout,
-      ...options,
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        Authorization: _token && `Bearer ${_token}`,
-        ...options.headers
-      }
+      ..._opts,
+      headers: _headers
     })
     if (!res.ok) {
       if (retries > 1 && retryCodes.includes(res.status)) {
