@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/restboard/rb-data-provider-json-server#readme",
   "dependencies": {
-    "node-fetch": "^2.6.1"
+    "cross-fetch": "^3.1.4"
   },
   "peerDependencies": {
     "rb-core-module": "^0.11.0"

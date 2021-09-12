@@ -1,5 +1,5 @@
-import fetch from 'node-fetch'
 import { RbDataProvider } from 'rb-core-module'
+import defaultClient from './default-client'
 
 const retryCodes = [408, 500, 502, 503, 504, 522, 524]
 
@@ -36,21 +36,6 @@ function _renderQuerystring (filters, sort, order, offset, limit) {
   return params.join('&')
 }
 
-async function _defaultClient (url, options) {
-  const opts = { ...options }
-  const contentType = opts.headers && opts.headers['Content-Type']
-  const shouldBodyBeString = (
-    !contentType ||
-    contentType.startsWith('application/json') ||
-    contentType.startsWith('text/')
-  )
-  const isBodyString = typeof opts.body === 'string'
-  if (shouldBodyBeString && !isBodyString && opts.body) {
-    opts.body = JSON.stringify(opts.body)
-  }
-  return fetch(url, opts)
-}
-
 class RbDataProviderJsonServer extends RbDataProvider {
   constructor (apiURL, {
     timeout,
@@ -69,7 +54,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
     this.getToken = tokenGetter || (() => undefined)
     this.parseResponse = responseParser || (res => res.data || res)
     this.renderQuerystring = querystringRenderer || _renderQuerystring
-    this.client = client || _defaultClient
+    this.client = client || defaultClient
   }
 
   async getMany (resource, {
@@ -148,7 +133,6 @@ class RbDataProviderJsonServer extends RbDataProvider {
     const _backoff = backoff || this.backoff
     const _token = await this.getToken()
     const _headers = {
-      'Content-Type': 'application/json; charset=UTF-8',
       Authorization: _token && `Bearer ${_token}`,
       ...options.headers
     }
