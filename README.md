@@ -1,6 +1,6 @@
 # rb-data-provider-json-server
 
-A [Restboard](https://github.com/restboard/restboard) data provider for JSON REST server
+A [Restboard](https://restboard.github.io/) data provider for JSON REST server
 
 ## Getting started
 
