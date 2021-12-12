@@ -17,7 +17,7 @@ provider.getMany('posts')
 Additional options can be configured during the data provider construction:
 
 ```js
-const provider = createJsonServerDataProvider('https://jsonplaceholder.typicode.com', {
+const provider = createProvider('https://jsonplaceholder.typicode.com', {
   timeout: 3000,
   retries: 5,
   backoff: 300
@@ -32,7 +32,9 @@ const provider = createJsonServerDataProvider('https://jsonplaceholder.typicode.
 | `getOne`        | `GET http://my.api.url/:resource/:id`                      |
 | `createOne`     | `POST http://my.api.url/:resource`                         |
 | `updateOne`     | `PATCH http://my.api.url/:resource/:id`                    |
+| `updateMany`    | `PATCH http://my.api.url/:resource`                        |
 | `deleteOne`     | `DELETE http://my.api.url/:resource/:id`                   |
+| `deleteMany`    | `DELETE http://my.api.url/:resource`                       |
 
 ## Options
 

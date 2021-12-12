@@ -77,8 +77,12 @@ class RbDataProviderJsonServer extends RbDataProvider {
     }
   }
 
-  async getOne (resource, { id }) {
-    const url = `${this.apiURL}/${resource}/${id}`
+  async getOne (resource, key, params = {}) {
+    let url = `${this.apiURL}/${resource}/${key}`
+    const qs = _renderQuerystring(params.filters)
+    if (qs) {
+      url += `?${qs}`
+    }
     const res = await this._performRequest(
       url,
       {
@@ -91,9 +95,13 @@ class RbDataProviderJsonServer extends RbDataProvider {
     }
   }
 
-  async createOne (resource, data) {
+  async createOne (resource, data, params = {}) {
     const { id, ...attrs } = data
-    const url = `${this.apiURL}/${resource}`
+    let url = `${this.apiURL}/${resource}`
+    const qs = _renderQuerystring(params.filters)
+    if (qs) {
+      url += `?${qs}`
+    }
     const res = await this._performRequest(
       url,
       {
@@ -107,8 +115,12 @@ class RbDataProviderJsonServer extends RbDataProvider {
     }
   }
 
-  async updateOne (resource, { id, ...data }) {
-    const url = `${this.apiURL}/${resource}/${id}`
+  async updateOne (resource, key, data, params = {}) {
+    let url = `${this.apiURL}/${resource}/${key}`
+    const qs = _renderQuerystring(params.filters)
+    if (qs) {
+      url += `?${qs}`
+    }
     const res = await this._performRequest(
       url,
       {
@@ -122,8 +134,12 @@ class RbDataProviderJsonServer extends RbDataProvider {
     }
   }
 
-  async updateMany (resource, data) {
-    const url = `${this.apiURL}/${resource}`
+  async updateMany (resource, data, params = {}) {
+    let url = `${this.apiURL}/${resource}`
+    const qs = _renderQuerystring(params.filters)
+    if (qs) {
+      url += `?${qs}`
+    }
     const res = await this._performRequest(
       url,
       {
@@ -137,8 +153,12 @@ class RbDataProviderJsonServer extends RbDataProvider {
     }
   }
 
-  async deleteOne (resource, { id }) {
-    const url = `${this.apiURL}/${resource}/${id}`
+  async deleteOne (resource, key, params = {}) {
+    let url = `${this.apiURL}/${resource}/${key}`
+    const qs = _renderQuerystring(params.filters)
+    if (qs) {
+      url += `?${qs}`
+    }
     await this._performRequest(
       url,
       {
@@ -147,7 +167,26 @@ class RbDataProviderJsonServer extends RbDataProvider {
       this.retries
     )
     return {
-      data: { id }
+      data: key
+    }
+  }
+
+  async deleteMany (resource, keys, params = {}) {
+    let url = `${this.apiURL}/${resource}`
+    const qs = _renderQuerystring(params.filters)
+    if (qs) {
+      url += `?${qs}`
+    }
+    await this._performRequest(
+      url,
+      {
+        method: 'DELETE',
+        body: keys
+      },
+      this.retries
+    )
+    return {
+      data: keys
     }
   }
 
