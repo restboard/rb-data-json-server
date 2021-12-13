@@ -1,37 +1,5 @@
 import { RbDataProvider } from 'rb-core-module'
-import defaultClient from './default-client'
-
-const retryCodes = [408, 500, 502, 503, 504, 522, 524]
-
-function _renderQuerystring (filters, sort, order, offset, limit) {
-  const params = []
-  if (filters) {
-    for (const key in filters) {
-      const filterValue = filters[key]
-      let values = [filterValue]
-      if (Array.isArray(filterValue)) {
-        values = filterValue
-      } else if (filterValue !== null && typeof filterValue === 'object') {
-        values = Object.keys(filterValue).filter(val => !!filterValue[val])
-      }
-      values.forEach(val => params.push(`${key}=${val}`))
-    }
-  }
-  if (sort) {
-    const _sort = Array.isArray(sort) ? sort.join(',') : sort
-    params.push(`_sort=${_sort}`)
-  }
-  if (order) {
-    params.push(`_order=${order}`)
-  }
-  if (offset) {
-    params.push(`_start=${offset}`)
-  }
-  if (limit) {
-    params.push(`_limit=${limit}`)
-  }
-  return params.join('&')
-}
+import { defaultClient, renderQuerystring, retryCodes } from './http'
 
 class RbDataProviderJsonServer extends RbDataProvider {
   constructor (
@@ -53,7 +21,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
     this.backoff = backoff || 300
     this.getToken = tokenGetter || (() => undefined)
     this.parseResponse = responseParser || (res => res.data || res)
-    this.renderQuerystring = querystringRenderer || _renderQuerystring
+    this.renderQuerystring = querystringRenderer || renderQuerystring
     this.client = client || defaultClient
     this.runningReqs = new Map()
   }
@@ -79,7 +47,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
 
   async getOne (resource, key, params = {}) {
     let url = `${this.apiURL}/${resource}/${key}`
-    const qs = _renderQuerystring(params.filters)
+    const qs = this.renderQuerystring(params.filters)
     if (qs) {
       url += `?${qs}`
     }
@@ -98,7 +66,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
   async createOne (resource, data, params = {}) {
     const { id, ...attrs } = data
     let url = `${this.apiURL}/${resource}`
-    const qs = _renderQuerystring(params.filters)
+    const qs = this.renderQuerystring(params.filters)
     if (qs) {
       url += `?${qs}`
     }
@@ -117,7 +85,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
 
   async updateOne (resource, key, data, params = {}) {
     let url = `${this.apiURL}/${resource}/${key}`
-    const qs = _renderQuerystring(params.filters)
+    const qs = this.renderQuerystring(params.filters)
     if (qs) {
       url += `?${qs}`
     }
@@ -136,7 +104,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
 
   async updateMany (resource, data, params = {}) {
     let url = `${this.apiURL}/${resource}`
-    const qs = _renderQuerystring(params.filters)
+    const qs = this.renderQuerystring(params.filters)
     if (qs) {
       url += `?${qs}`
     }
@@ -155,7 +123,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
 
   async deleteOne (resource, key, params = {}) {
     let url = `${this.apiURL}/${resource}/${key}`
-    const qs = _renderQuerystring(params.filters)
+    const qs = this.renderQuerystring(params.filters)
     if (qs) {
       url += `?${qs}`
     }
@@ -173,7 +141,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
 
   async deleteMany (resource, keys, params = {}) {
     let url = `${this.apiURL}/${resource}`
-    const qs = _renderQuerystring(params.filters)
+    const qs = this.renderQuerystring(params.filters)
     if (qs) {
       url += `?${qs}`
     }
