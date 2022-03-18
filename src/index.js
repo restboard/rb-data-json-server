@@ -11,7 +11,8 @@ class RbDataProviderJsonServer extends RbDataProvider {
       client,
       tokenGetter,
       responseParser,
-      querystringRenderer
+      querystringRenderer,
+      idempotentUpdate
     } = {}
   ) {
     super()
@@ -24,6 +25,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
     this.renderQuerystring = querystringRenderer || renderQuerystring
     this.client = client || defaultClient
     this.runningReqs = new Map()
+    this.idempotentUpdate = idempotentUpdate || false
   }
 
   async getMany (
@@ -92,7 +94,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
     const res = await this._performRequest(
       url,
       {
-        method: 'PATCH',
+        method: this.idempotentUpdate ? 'PUT' : 'PATCH',
         body: data
       },
       this.retries
@@ -111,7 +113,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
     const res = await this._performRequest(
       url,
       {
-        method: 'PATCH',
+        method: this.idempotentUpdate ? 'PUT' : 'PATCH',
         body: data
       },
       this.retries
