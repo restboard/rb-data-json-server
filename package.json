@@ -1,6 +1,6 @@
 {
   "name": "rb-data-provider-json-server",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "description": "A Restboard data provider for JSON REST server",
   "main": "src/index.js",
   "scripts": {
