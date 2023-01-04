@@ -181,31 +181,33 @@ class RbDataProviderJsonServer extends RbDataProvider {
     if (this.runningReqs.has(_reqId)) {
       return this.runningReqs.get(_reqId)
     }
-    const req = this.client(url, _reqOpts).finally(() =>
-      this.runningReqs.delete(_reqId)
-    )
+
+    const req = this.client(url, _reqOpts)
+      .finally(() => this.runningReqs.delete(_reqId))
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+        // Retry on failure
+        if (retries > 1 && retryCodes.includes(res.status)) {
+          return new Promise((resolve, reject) => {
+            const retryRequest = () => {
+              this._performRequest(url, options, retries - 1, _backoff * 2)
+                .then(resolve)
+                .catch(reject)
+            }
+            setTimeout(retryRequest, _backoff)
+          })
+        } else {
+          throw new Error(
+            res.statusText || `request failed with status ${res.status}`
+          )
+        }
+      })
+
     this.runningReqs.set(_reqId, req)
 
-    // Retry on failure
-    return req.then(res => {
-      if (res.ok) {
-        return res.json()
-      }
-      if (retries > 1 && retryCodes.includes(res.status)) {
-        return new Promise((resolve, reject) => {
-          const retryRequest = () => {
-            this._performRequest(url, options, retries - 1, _backoff * 2)
-              .then(resolve)
-              .catch(reject)
-          }
-          setTimeout(retryRequest, _backoff)
-        })
-      } else {
-        throw new Error(
-          res.statusText || `request failed with status ${res.status}`
-        )
-      }
-    })
+    return req
   }
 }
 
