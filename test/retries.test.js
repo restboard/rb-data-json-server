@@ -1,5 +1,5 @@
-import * as t from 'tap'
-import createProvider from '../src/index'
+import t from 'tap'
+import createProvider from '../src/index.js'
 
 t.test('retries', async t => {
   let attempts = 0

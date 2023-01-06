@@ -1,5 +1,5 @@
 import { RbDataProvider } from 'rb-core-module'
-import { defaultClient, renderQuerystring, retryCodes } from './http'
+import { defaultClient, renderQuerystring, retryCodes } from './http.js'
 
 class RbDataProviderJsonServer extends RbDataProvider {
   constructor (

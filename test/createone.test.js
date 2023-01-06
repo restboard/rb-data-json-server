@@ -1,5 +1,5 @@
-import * as t from 'tap'
-import createProvider from '../src/index'
+import t from 'tap'
+import createProvider from '../src/index.js'
 
 t.test('createOne', async t => {
   const provider = createProvider('https://jsonplaceholder.typicode.com')
