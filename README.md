@@ -39,17 +39,17 @@ const provider = createProvider("https://jsonplaceholder.typicode.com", {
 
 ## Options
 
-| Name                  | Description                                                                                                                           | Default   |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| `timeout`             | The timeout (ms) for each single HTTP request attempt                                                                                 | 5000      |
-| `retries`             | The number of attempts before failing                                                                                                 | 3         |
-| `backoff`             | The incremental delay (ms) between request attempts                                                                                   | 300       |
-| `client`              | The HTTP client used to perform the requests                                                                                          | `fetch`   |
-| `tokenGetter`         | An async function to get the bearer token to be used                                                                                  | undefined |
-| `responseParser`      | A function to extract the payload from the response                                                                                   | undefined |
-| `querystringRenderer` | A function to render the request querystring                                                                                          | undefined |
-| `idempotentUpdate`    | If set, the `PUT` method will be used on update requests                                                                              | false     |
-| `cache`               | An optional cache object to store request responses. Should implement the following API: `has(reqId)`, `get(reqId)`, `set(reqId,res)` | null      |
+| Name                  | Description                                                                                                                           | Default     |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `timeout`             | The timeout (ms) for each single HTTP request attempt                                                                                 | `5000`      |
+| `retries`             | The number of attempts before failing                                                                                                 | `3`         |
+| `backoff`             | The incremental delay (ms) between request attempts                                                                                   | `300`       |
+| `client`              | The HTTP client used to perform the requests                                                                                          | `fetch`     |
+| `tokenGetter`         | An async function to get the bearer token to be used                                                                                  | `undefined` |
+| `responseParser`      | A function to extract the payload from the response                                                                                   | `undefined` |
+| `querystringRenderer` | A function to render the request querystring                                                                                          | `undefined` |
+| `idempotentUpdate`    | If true, the `PUT` method will be used on update requests                                                                             | `false`     |
+| `cache`               | An optional cache object to store request responses. Should implement the following API: `has(reqId)`, `get(reqId)`, `set(reqId,res)` | `undefined` |
 
 ## Test
 
