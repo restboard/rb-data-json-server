@@ -5,49 +5,51 @@ A [Restboard](https://restboard.github.io/) data provider for JSON REST server
 ## Getting started
 
 ```js
-import createProvider from 'rb-data-provider-json-server'
+import createProvider from "rb-data-provider-json-server";
 
-const provider = createProvider('https://jsonplaceholder.typicode.com')
+const provider = createProvider("https://jsonplaceholder.typicode.com");
 
-provider.getMany('posts')
-  .then(posts => console.log(posts))
-  .catch(err => console.error(err))
+provider
+  .getMany("posts")
+  .then((posts) => console.log(posts))
+  .catch((err) => console.error(err));
 ```
 
 Additional options can be configured during the data provider construction:
 
 ```js
-const provider = createProvider('https://jsonplaceholder.typicode.com', {
+const provider = createProvider("https://jsonplaceholder.typicode.com", {
   timeout: 3000,
   retries: 5,
-  backoff: 300
-})
+  backoff: 300,
+});
 ```
 
 ## REST Dialect
 
-| Method          | API call                                                   |
-| --------------- | ---------------------------------------------------------- |
-| `getMany`       | `GET http://my.api.url/:resource`                          |
-| `getOne`        | `GET http://my.api.url/:resource/:id`                      |
-| `createOne`     | `POST http://my.api.url/:resource`                         |
-| `updateOne`     | `PATCH http://my.api.url/:resource/:id`                    |
-| `updateMany`    | `PATCH http://my.api.url/:resource`                        |
-| `deleteOne`     | `DELETE http://my.api.url/:resource/:id`                   |
-| `deleteMany`    | `DELETE http://my.api.url/:resource`                       |
+| Method       | API call                                 |
+| ------------ | ---------------------------------------- |
+| `getMany`    | `GET http://my.api.url/:resource`        |
+| `getOne`     | `GET http://my.api.url/:resource/:id`    |
+| `createOne`  | `POST http://my.api.url/:resource`       |
+| `updateOne`  | `PATCH http://my.api.url/:resource/:id`  |
+| `updateMany` | `PATCH http://my.api.url/:resource`      |
+| `deleteOne`  | `DELETE http://my.api.url/:resource/:id` |
+| `deleteMany` | `DELETE http://my.api.url/:resource`     |
 
 ## Options
 
-| Name                  | Description                                              | Default   |
-| ----------------------| ---------------------------------------------------------| ----------|
-| `timeout`             | The timeout (ms) for each single HTTP request attempt    | 5000      |
-| `retries`             | The number of attempts before failing                    | 3         |
-| `backoff`             | The incremental delay (ms) between request attempts      | 300       |
-| `client`              | The HTTP client used to perform the requests             | `fetch`   |
-| `tokenGetter`         | An async function to get the bearer token to be used     | undefined |
-| `responseParser`      | A function to extract the payload from the response      | undefined |
-| `querystringRenderer` | A function to render the request querystring             | undefined |
-| `idempotentUpdate`    | If set, the `PUT` method will be used on update requests | false |
+| Name                  | Description                                                                                                                           | Default   |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------- |
+| `timeout`             | The timeout (ms) for each single HTTP request attempt                                                                                 | 5000      |
+| `retries`             | The number of attempts before failing                                                                                                 | 3         |
+| `backoff`             | The incremental delay (ms) between request attempts                                                                                   | 300       |
+| `client`              | The HTTP client used to perform the requests                                                                                          | `fetch`   |
+| `tokenGetter`         | An async function to get the bearer token to be used                                                                                  | undefined |
+| `responseParser`      | A function to extract the payload from the response                                                                                   | undefined |
+| `querystringRenderer` | A function to render the request querystring                                                                                          | undefined |
+| `idempotentUpdate`    | If set, the `PUT` method will be used on update requests                                                                              | false     |
+| `cache`               | An optional cache object to store request responses. Should implement the following API: `has(reqId)`, `get(reqId)`, `set(reqId,res)` | null      |
 
 ## Test
 
@@ -71,7 +73,7 @@ Please open a new issue on:
 
 This project is inspired by:
 
-* [ra-data-json-server](https://github.com/marmelab/react-admin/tree/master/packages/ra-data-json-server)
+- [ra-data-json-server](https://github.com/marmelab/react-admin/tree/master/packages/ra-data-json-server)
 
 ## License
 

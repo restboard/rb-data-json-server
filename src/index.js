@@ -1,8 +1,8 @@
-import { RbDataProvider } from 'rb-core-module'
-import { defaultClient, renderQuerystring, retryCodes } from './http.js'
+import { RbDataProvider } from "rb-core-module";
+import { defaultClient, renderQuerystring, retryCodes } from "./http.js";
 
 class RbDataProviderJsonServer extends RbDataProvider {
-  constructor (
+  constructor(
     apiURL,
     {
       timeout,
@@ -12,181 +12,188 @@ class RbDataProviderJsonServer extends RbDataProvider {
       tokenGetter,
       responseParser,
       querystringRenderer,
-      idempotentUpdate
+      idempotentUpdate,
+      cache,
     } = {}
   ) {
-    super()
-    this.apiURL = apiURL
-    this.timeout = timeout || 5000
-    this.retries = retries || 3
-    this.backoff = backoff || 300
-    this.getToken = tokenGetter || (() => undefined)
-    this.parseResponse = responseParser || (res => res.data || res)
-    this.renderQuerystring = querystringRenderer || renderQuerystring
-    this.client = client || defaultClient
-    this.runningReqs = new Map()
-    this.idempotentUpdate = idempotentUpdate || false
+    super();
+    this.apiURL = apiURL;
+    this.timeout = timeout || 5000;
+    this.retries = retries || 3;
+    this.backoff = backoff || 300;
+    this.getToken = tokenGetter || (() => undefined);
+    this.parseResponse = responseParser || ((res) => res.data || res);
+    this.renderQuerystring = querystringRenderer || renderQuerystring;
+    this.client = client || defaultClient;
+    this.runningReqs = new Map();
+    this.idempotentUpdate = idempotentUpdate || false;
+    this.cache = cache || null;
   }
 
-  async getMany (
+  async getMany(
     resource,
-    { filters = {}, sort = '', order = '', offset = 0, limit = null } = {}
+    { filters = {}, sort = "", order = "", offset = 0, limit = null } = {}
   ) {
-    const base = `${this.apiURL}/${resource}`
-    const qs = this.renderQuerystring(filters, sort, order, offset, limit)
-    const url = [base, qs].filter(v => v).join('?')
+    const base = `${this.apiURL}/${resource}`;
+    const qs = this.renderQuerystring(filters, sort, order, offset, limit);
+    const url = [base, qs].filter((v) => v).join("?");
     const res = await this._performRequest(
       url,
       {
-        method: 'GET'
+        method: "GET",
       },
       this.retries
-    )
+    );
     return {
-      data: this.parseResponse(res)
-    }
+      data: this.parseResponse(res),
+    };
   }
 
-  async getOne (resource, key, params = {}) {
-    let url = `${this.apiURL}/${resource}/${key}`
-    const qs = this.renderQuerystring(params.filters)
+  async getOne(resource, key, params = {}) {
+    let url = `${this.apiURL}/${resource}/${key}`;
+    const qs = this.renderQuerystring(params.filters);
     if (qs) {
-      url += `?${qs}`
-    }
-    const res = await this._performRequest(
-      url,
-      {
-        method: 'GET'
-      },
-      this.retries
-    )
-    return {
-      data: this.parseResponse(res)
-    }
-  }
-
-  async createOne (resource, data, params = {}) {
-    const { id, ...attrs } = data
-    let url = `${this.apiURL}/${resource}`
-    const qs = this.renderQuerystring(params.filters)
-    if (qs) {
-      url += `?${qs}`
+      url += `?${qs}`;
     }
     const res = await this._performRequest(
       url,
       {
-        method: 'POST',
-        body: attrs
+        method: "GET",
       },
       this.retries
-    )
+    );
     return {
-      data: this.parseResponse(res)
-    }
+      data: this.parseResponse(res),
+    };
   }
 
-  async updateOne (resource, key, data, params = {}) {
-    let url = `${this.apiURL}/${resource}/${key}`
-    const qs = this.renderQuerystring(params.filters)
+  async createOne(resource, data, params = {}) {
+    const { id, ...attrs } = data;
+    let url = `${this.apiURL}/${resource}`;
+    const qs = this.renderQuerystring(params.filters);
     if (qs) {
-      url += `?${qs}`
+      url += `?${qs}`;
     }
     const res = await this._performRequest(
       url,
       {
-        method: this.idempotentUpdate ? 'PUT' : 'PATCH',
-        body: data
+        method: "POST",
+        body: attrs,
       },
       this.retries
-    )
+    );
     return {
-      data: this.parseResponse(res)
-    }
+      data: this.parseResponse(res),
+    };
   }
 
-  async updateMany (resource, data, params = {}) {
-    let url = `${this.apiURL}/${resource}`
-    const qs = this.renderQuerystring(params.filters)
+  async updateOne(resource, key, data, params = {}) {
+    let url = `${this.apiURL}/${resource}/${key}`;
+    const qs = this.renderQuerystring(params.filters);
     if (qs) {
-      url += `?${qs}`
+      url += `?${qs}`;
     }
     const res = await this._performRequest(
       url,
       {
-        method: this.idempotentUpdate ? 'PUT' : 'PATCH',
-        body: data
+        method: this.idempotentUpdate ? "PUT" : "PATCH",
+        body: data,
       },
       this.retries
-    )
+    );
     return {
-      data: this.parseResponse(res)
-    }
+      data: this.parseResponse(res),
+    };
   }
 
-  async deleteOne (resource, key, params = {}) {
-    let url = `${this.apiURL}/${resource}/${key}`
-    const qs = this.renderQuerystring(params.filters)
+  async updateMany(resource, data, params = {}) {
+    let url = `${this.apiURL}/${resource}`;
+    const qs = this.renderQuerystring(params.filters);
     if (qs) {
-      url += `?${qs}`
+      url += `?${qs}`;
+    }
+    const res = await this._performRequest(
+      url,
+      {
+        method: this.idempotentUpdate ? "PUT" : "PATCH",
+        body: data,
+      },
+      this.retries
+    );
+    return {
+      data: this.parseResponse(res),
+    };
+  }
+
+  async deleteOne(resource, key, params = {}) {
+    let url = `${this.apiURL}/${resource}/${key}`;
+    const qs = this.renderQuerystring(params.filters);
+    if (qs) {
+      url += `?${qs}`;
     }
     await this._performRequest(
       url,
       {
-        method: 'DELETE'
+        method: "DELETE",
       },
       this.retries
-    )
+    );
     return {
-      data: key
-    }
+      data: key,
+    };
   }
 
-  async deleteMany (resource, keys, params = {}) {
-    let url = `${this.apiURL}/${resource}`
-    const qs = this.renderQuerystring(params.filters)
+  async deleteMany(resource, keys, params = {}) {
+    let url = `${this.apiURL}/${resource}`;
+    const qs = this.renderQuerystring(params.filters);
     if (qs) {
-      url += `?${qs}`
+      url += `?${qs}`;
     }
     await this._performRequest(
       url,
       {
-        method: 'DELETE',
-        body: keys
+        method: "DELETE",
+        body: keys,
       },
       this.retries
-    )
+    );
     return {
-      data: keys
-    }
+      data: keys,
+    };
   }
 
-  async _performRequest (url, options, retries, backoff) {
-    const _backoff = backoff || this.backoff
-    const _token = await this.getToken()
+  async _performRequest(url, options, retries, backoff) {
+    const _backoff = backoff || this.backoff;
+    const _token = await this.getToken();
     const _headers = {
       Authorization: _token && `Bearer ${_token}`,
-      ...options.headers
-    }
+      ...options.headers,
+    };
     const _reqOpts = {
       timeout: this.timeout,
       ...options,
-      headers: _headers
-    }
+      headers: _headers,
+    };
     const _reqId = JSON.stringify({
       ..._reqOpts,
-      url
-    })
+      url,
+    });
+
+    // Caching
+    if (this.cache && (await this.cache.has(_reqId))) {
+      return this.cache.get(_reqId);
+    }
 
     // Batching
     if (this.runningReqs.has(_reqId)) {
-      return this.runningReqs.get(_reqId)
+      return this.runningReqs.get(_reqId);
     }
 
     const req = this.client(url, _reqOpts)
       .finally(() => this.runningReqs.delete(_reqId))
-      .then(res => {
+      .then((res) => {
         if (res.ok) {
-          return res.json()
+          return res.json();
         }
         // Retry on failure
         if (retries > 1 && retryCodes.includes(res.status)) {
@@ -194,25 +201,31 @@ class RbDataProviderJsonServer extends RbDataProvider {
             const retryRequest = () => {
               this._performRequest(url, options, retries - 1, _backoff * 2)
                 .then(resolve)
-                .catch(reject)
-            }
-            setTimeout(retryRequest, _backoff)
-          })
+                .catch(reject);
+            };
+            setTimeout(retryRequest, _backoff);
+          });
         } else {
           throw new Error(
             res.statusText || `request failed with status ${res.status}`
-          )
+          );
         }
       })
+      .then((res) => {
+        if (this.cache) {
+          this.cache.set(_reqId, res);
+        }
+        return res;
+      });
 
-    this.runningReqs.set(_reqId, req)
+    this.runningReqs.set(_reqId, req);
 
-    return req
+    return req;
   }
 }
 
-function createProvider (apiURL, opts) {
-  return new RbDataProviderJsonServer(apiURL, opts)
+function createProvider(apiURL, opts) {
+  return new RbDataProviderJsonServer(apiURL, opts);
 }
 
-export default createProvider
+export default createProvider;
