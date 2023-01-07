@@ -20,7 +20,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
     this.apiURL = apiURL;
     this.timeout = timeout || 5000;
     this.retries = retries || 3;
-    this.backoff = backoff || 300;
+    this.backoff = backoff || 500;
     this.getToken = tokenGetter || (() => undefined);
     this.parseResponse = responseParser || ((res) => res.data || res);
     this.renderQuerystring = querystringRenderer || renderQuerystring;

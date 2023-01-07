@@ -43,7 +43,7 @@ const provider = createProvider("https://jsonplaceholder.typicode.com", {
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
 | `timeout`             | The timeout (ms) for each single HTTP request attempt                                                                                 | `5000`      |
 | `retries`             | The number of attempts before failing                                                                                                 | `3`         |
-| `backoff`             | The incremental delay (ms) between request attempts                                                                                   | `300`       |
+| `backoff`             | The incremental delay (ms) between request attempts                                                                                   | `500`       |
 | `client`              | The HTTP client used to perform the requests                                                                                          | `fetch`     |
 | `tokenGetter`         | An async function to get the bearer token to be used                                                                                  | `undefined` |
 | `responseParser`      | A function to extract the payload from the response                                                                                   | `undefined` |
