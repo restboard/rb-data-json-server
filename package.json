@@ -22,10 +22,10 @@
     "cross-fetch": "^3.1.5"
   },
   "peerDependencies": {
-    "rb-core-module": "^0.27.0"
+    "rb-core-module": "^0.28.1"
   },
   "devDependencies": {
     "eslint": "^8.31.0",
-    "tap": "^16.3.2"
+    "tap": "^16.3.4"
   }
 }
