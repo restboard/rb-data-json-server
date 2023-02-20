@@ -46,6 +46,7 @@ const provider = createProvider("https://jsonplaceholder.typicode.com", {
 | `backoff`             | The incremental delay (ms) between request attempts                                                                                   | `500`       |
 | `client`              | The HTTP client used to perform the requests                                                                                          | `fetch`     |
 | `tokenGetter`         | An async function to get the bearer token to be used                                                                                  | `undefined` |
+| `contentTypeParser`   | A function used to parse the content type of the request payload (if any)                     | `(data) => 'application/json; charset=UTF-8'` |
 | `responseParser`      | A function to extract the payload from the response                                                                                   | `undefined` |
 | `querystringRenderer` | A function to render the request querystring                                                                                          | `undefined` |
 | `idempotentUpdate`    | If true, the `PUT` method will be used on update requests                                                                             | `false`     |

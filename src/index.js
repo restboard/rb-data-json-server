@@ -10,6 +10,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
       backoff,
       client,
       tokenGetter,
+      contentTypeParser,
       responseParser,
       querystringRenderer,
       idempotentUpdate,
@@ -22,6 +23,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
     this.retries = retries || 3;
     this.backoff = backoff || 500;
     this.getToken = tokenGetter || (() => undefined);
+    this.parseContentType = contentTypeParser || (() => 'application/json; charset=UTF-8');
     this.parseResponse = responseParser || ((res) => res.data || res);
     this.renderQuerystring = querystringRenderer || renderQuerystring;
     this.client = client || defaultClient;
@@ -68,8 +70,8 @@ class RbDataProviderJsonServer extends RbDataProvider {
   }
 
   async createOne(resource, data, params = {}) {
-    const { id, ...attrs } = data;
     let url = `${this.apiURL}/${resource}`;
+    const ct = this.parseContentType(data);
     const qs = this.renderQuerystring(params.filters);
     if (qs) {
       url += `?${qs}`;
@@ -78,7 +80,10 @@ class RbDataProviderJsonServer extends RbDataProvider {
       url,
       {
         method: "POST",
-        body: attrs,
+        body: data,
+        headers: {
+          'Content-Type': ct
+        }
       },
       this.retries
     );
@@ -89,6 +94,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
 
   async updateOne(resource, key, data, params = {}) {
     let url = `${this.apiURL}/${resource}/${key}`;
+    const ct = this.parseContentType(data);
     const qs = this.renderQuerystring(params.filters);
     if (qs) {
       url += `?${qs}`;
@@ -98,6 +104,9 @@ class RbDataProviderJsonServer extends RbDataProvider {
       {
         method: this.idempotentUpdate ? "PUT" : "PATCH",
         body: data,
+        headers: {
+          'Content-Type': ct
+        }
       },
       this.retries
     );
@@ -108,6 +117,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
 
   async updateMany(resource, data, params = {}) {
     let url = `${this.apiURL}/${resource}`;
+    const ct = this.parseContentType(data);
     const qs = this.renderQuerystring(params.filters);
     if (qs) {
       url += `?${qs}`;
@@ -117,6 +127,9 @@ class RbDataProviderJsonServer extends RbDataProvider {
       {
         method: this.idempotentUpdate ? "PUT" : "PATCH",
         body: data,
+        headers: {
+          'Content-Type': ct
+        }
       },
       this.retries
     );
