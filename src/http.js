@@ -4,23 +4,28 @@ export const retryCodes = [408, 500, 502, 503, 504, 522, 524]
 
 export async function defaultClient (url, options) {
   const opts = { ...options }
-  const contentType = opts.headers && opts.headers['Content-Type']
-  const shouldStringifyBody =
-    !contentType ||
-    contentType.startsWith('application/json') ||
-    contentType.startsWith('text/')
+  let contentType = 'application/json; charset=UTF-8'
+  if (opts.headers && 'Content-Type' in opts.headers) {
+    contentType = opts.headers['Content-Type']
+  }
+  const shouldStringifyBody = contentType &&
+    contentType.startsWith('application/json')
   const isBodyString = typeof opts.body === 'string'
-  if (shouldStringifyBody && !isBodyString && opts.body) {
+  if (!isBodyString && opts.body && shouldStringifyBody) {
     opts.body = JSON.stringify(opts.body)
+  }
+  const headers = {
+    Accept: 'application/json',
+    'Content-Type': contentType,
+    ...opts.headers
+  }
+  if (headers['Content-Type'] === undefined) {
+    delete headers['Content-Type'];
   }
   return fetch(url, {
     credentials: 'include',
     ...opts,
-    headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
-      Accept: 'application/json',
-      ...opts.headers
-    }
+    headers
   })
 }
 
