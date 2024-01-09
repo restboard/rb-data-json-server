@@ -5,36 +5,43 @@ class RbDataProviderJsonServer extends RbDataProvider {
   constructor(
     apiURL,
     {
-      timeout,
-      retries,
-      backoff,
-      client,
-      tokenGetter,
-      contentTypeParser,
-      responseParser,
-      querystringRenderer,
-      idempotentUpdate,
-      cache,
+      timeout = 5000,
+      retries = 3,
+      backoff = 500,
+      client = defaultClient,
+      tokenGetter = null,
+      contentTypeParser = (data) => "application/json; charset=UTF-8",
+      responseParser = (res) => res.data || res,
+      querystringRenderer = renderQuerystring,
+      idempotentUpdate = false,
+      cache = null,
     } = {}
   ) {
     super();
     this.apiURL = apiURL;
-    this.timeout = timeout || 5000;
-    this.retries = retries || 3;
-    this.backoff = backoff || 500;
-    this.getToken = tokenGetter || (() => undefined);
-    this.parseContentType = contentTypeParser || (() => 'application/json; charset=UTF-8');
-    this.parseResponse = responseParser || ((res) => res.data || res);
-    this.renderQuerystring = querystringRenderer || renderQuerystring;
-    this.client = client || defaultClient;
+    this.timeout = timeout;
+    this.retries = retries;
+    this.backoff = backoff;
+    this.getToken = tokenGetter;
+    this.parseContentType = contentTypeParser;
+    this.parseResponse = responseParser;
+    this.renderQuerystring = querystringRenderer;
+    this.client = client;
     this.runningReqs = new Map();
-    this.idempotentUpdate = idempotentUpdate || false;
-    this.cache = cache || null;
+    this.idempotentUpdate = idempotentUpdate;
+    this.cache = cache;
   }
 
   async getMany(
     resource,
-    { filters = {}, sort = "", order = "", offset = 0, limit = null } = {}
+    {
+      filters = {},
+      sort = "",
+      order = "",
+      offset = 0,
+      limit = null,
+      abort = null,
+    } = {}
   ) {
     const base = `${this.apiURL}/${resource}`;
     const qs = this.renderQuerystring(filters, sort, order, offset, limit);
@@ -43,6 +50,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
       url,
       {
         method: "GET",
+        abort,
       },
       this.retries
     );
@@ -51,9 +59,9 @@ class RbDataProviderJsonServer extends RbDataProvider {
     };
   }
 
-  async getOne(resource, key, params = {}) {
+  async getOne(resource, key, { filters = {}, abort = null } = {}) {
     let url = `${this.apiURL}/${resource}/${key}`;
-    const qs = this.renderQuerystring(params.filters);
+    const qs = this.renderQuerystring(filters);
     if (qs) {
       url += `?${qs}`;
     }
@@ -61,6 +69,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
       url,
       {
         method: "GET",
+        abort,
       },
       this.retries
     );
@@ -69,10 +78,10 @@ class RbDataProviderJsonServer extends RbDataProvider {
     };
   }
 
-  async createOne(resource, data, params = {}) {
+  async createOne(resource, data, { filters = {}, abort = null } = {}) {
     let url = `${this.apiURL}/${resource}`;
     const ct = this.parseContentType(data);
-    const qs = this.renderQuerystring(params.filters);
+    const qs = this.renderQuerystring(filters);
     if (qs) {
       url += `?${qs}`;
     }
@@ -82,8 +91,9 @@ class RbDataProviderJsonServer extends RbDataProvider {
         method: "POST",
         body: data,
         headers: {
-          'Content-Type': ct
-        }
+          "Content-Type": ct,
+        },
+        abort,
       },
       this.retries
     );
@@ -92,10 +102,10 @@ class RbDataProviderJsonServer extends RbDataProvider {
     };
   }
 
-  async updateOne(resource, key, data, params = {}) {
+  async updateOne(resource, key, data, { filters = {}, abort = null } = {}) {
     let url = `${this.apiURL}/${resource}/${key}`;
     const ct = this.parseContentType(data);
-    const qs = this.renderQuerystring(params.filters);
+    const qs = this.renderQuerystring(filters);
     if (qs) {
       url += `?${qs}`;
     }
@@ -105,8 +115,9 @@ class RbDataProviderJsonServer extends RbDataProvider {
         method: this.idempotentUpdate ? "PUT" : "PATCH",
         body: data,
         headers: {
-          'Content-Type': ct
-        }
+          "Content-Type": ct,
+        },
+        abort,
       },
       this.retries
     );
@@ -115,10 +126,10 @@ class RbDataProviderJsonServer extends RbDataProvider {
     };
   }
 
-  async updateMany(resource, data, params = {}) {
+  async updateMany(resource, data, { filters = {}, abort = null } = {}) {
     let url = `${this.apiURL}/${resource}`;
     const ct = this.parseContentType(data);
-    const qs = this.renderQuerystring(params.filters);
+    const qs = this.renderQuerystring(filters);
     if (qs) {
       url += `?${qs}`;
     }
@@ -128,8 +139,9 @@ class RbDataProviderJsonServer extends RbDataProvider {
         method: this.idempotentUpdate ? "PUT" : "PATCH",
         body: data,
         headers: {
-          'Content-Type': ct
-        }
+          "Content-Type": ct,
+        },
+        abort,
       },
       this.retries
     );
@@ -138,9 +150,9 @@ class RbDataProviderJsonServer extends RbDataProvider {
     };
   }
 
-  async deleteOne(resource, key, params = {}) {
+  async deleteOne(resource, key, { filters = {}, abort = null } = {}) {
     let url = `${this.apiURL}/${resource}/${key}`;
-    const qs = this.renderQuerystring(params.filters);
+    const qs = this.renderQuerystring(filters);
     if (qs) {
       url += `?${qs}`;
     }
@@ -148,6 +160,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
       url,
       {
         method: "DELETE",
+        abort,
       },
       this.retries
     );
@@ -156,9 +169,9 @@ class RbDataProviderJsonServer extends RbDataProvider {
     };
   }
 
-  async deleteMany(resource, keys, params = {}) {
+  async deleteMany(resource, keys, { filters = {}, abort = null } = {}) {
     let url = `${this.apiURL}/${resource}`;
-    const qs = this.renderQuerystring(params.filters);
+    const qs = this.renderQuerystring(filters);
     if (qs) {
       url += `?${qs}`;
     }
@@ -167,6 +180,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
       {
         method: "DELETE",
         body: keys,
+        abort,
       },
       this.retries
     );
@@ -176,21 +190,23 @@ class RbDataProviderJsonServer extends RbDataProvider {
   }
 
   async _performRequest(url, options, retries, backoff) {
+    const { abort, headers, ...opts } = options;
     const _backoff = backoff || this.backoff;
-    const _token = await this.getToken();
+    const _token = this.getToken ? await this.getToken() : undefined;
     const _headers = {
       Authorization: _token && `Bearer ${_token}`,
-      ...options.headers,
+      ...headers,
     };
     const _reqOpts = {
       timeout: this.timeout,
-      ...options,
+      ...opts,
       headers: _headers,
     };
     const _reqId = JSON.stringify({
       ..._reqOpts,
       url,
     });
+    _reqOpts.abort = abort;
 
     // Caching
     if (this.cache && (await this.cache.has(_reqId))) {
@@ -219,7 +235,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
             setTimeout(retryRequest, _backoff);
           });
         } else {
-          throw new Error(
+          return Promise.reject(
             res.statusText || `request failed with status ${res.status}`
           );
         }

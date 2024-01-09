@@ -11,7 +11,14 @@
     "type": "git",
     "url": "git+https://github.com/restboard/rb-data-provider-json-server.git"
   },
-  "keywords": ["REST", "JSON", "server", "data", "provider", "restboard"],
+  "keywords": [
+    "REST",
+    "JSON",
+    "server",
+    "data",
+    "provider",
+    "restboard"
+  ],
   "author": "Emanuele Bertoldi <emanuele.bertoldi@gmail.com>",
   "license": "MIT",
   "bugs": {
