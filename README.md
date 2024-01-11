@@ -2,6 +2,8 @@
 
 A [Restboard](https://restboard.github.io/) data provider for JSON REST server
 
+[![Node.js CI](https://github.com/restboard/rb-data-provider-json-server/actions/workflows/node.js.yml/badge.svg)](https://github.com/restboard/rrb-data-provider-json-server/actions/workflows/node.js.yml)
+
 ## Getting started
 
 ```js
