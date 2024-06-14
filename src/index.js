@@ -11,7 +11,12 @@ class RbDataProviderJsonServer extends RbDataProvider {
       client = defaultClient,
       tokenGetter = null,
       contentTypeParser = (data) => "application/json; charset=UTF-8",
-      responseParser = (res) => res.data || res,
+      responseDataParser = (res) => res?.data || res,
+      responseMetaParser = (res) => res?.meta || {},
+      responseErrorParser = (res) =>
+        res
+          ? res.statusText || `request failed with status ${res.status}`
+          : null,
       querystringRenderer = renderQuerystring,
       idempotentUpdate = false,
       cache = null,
@@ -24,7 +29,9 @@ class RbDataProviderJsonServer extends RbDataProvider {
     this.backoff = backoff;
     this.getToken = tokenGetter;
     this.parseContentType = contentTypeParser;
-    this.parseResponse = responseParser;
+    this.parseData = responseDataParser;
+    this.parseMeta = responseMetaParser;
+    this.parseError = responseErrorParser;
     this.renderQuerystring = querystringRenderer;
     this.client = client;
     this.runningReqs = new Map();
@@ -55,7 +62,8 @@ class RbDataProviderJsonServer extends RbDataProvider {
       this.retries
     );
     return {
-      data: this.parseResponse(res),
+      data: this.parseData(res),
+      meta: this.parseMeta(res),
     };
   }
 
@@ -74,7 +82,8 @@ class RbDataProviderJsonServer extends RbDataProvider {
       this.retries
     );
     return {
-      data: this.parseResponse(res),
+      data: this.parseData(res),
+      meta: this.parseMeta(res),
     };
   }
 
@@ -98,7 +107,8 @@ class RbDataProviderJsonServer extends RbDataProvider {
       this.retries
     );
     return {
-      data: this.parseResponse(res),
+      data: this.parseData(res),
+      meta: this.parseMeta(res),
     };
   }
 
@@ -122,7 +132,8 @@ class RbDataProviderJsonServer extends RbDataProvider {
       this.retries
     );
     return {
-      data: this.parseResponse(res),
+      data: this.parseData(res),
+      meta: this.parseMeta(res),
     };
   }
 
@@ -146,7 +157,8 @@ class RbDataProviderJsonServer extends RbDataProvider {
       this.retries
     );
     return {
-      data: this.parseResponse(res),
+      data: this.parseData(res),
+      meta: this.parseMeta(res),
     };
   }
 
@@ -235,9 +247,7 @@ class RbDataProviderJsonServer extends RbDataProvider {
             setTimeout(retryRequest, _backoff);
           });
         } else {
-          return Promise.reject(
-            res.statusText || `request failed with status ${res.status}`
-          );
+          return Promise.reject(this.parseError(res));
         }
       })
       .then((res) => {

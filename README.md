@@ -49,7 +49,9 @@ const provider = createProvider("https://jsonplaceholder.typicode.com", {
 | `client`              | The HTTP client used to perform the requests          | `fetch`     |
 | `tokenGetter`         | An async function to get the bearer token to be used  | `undefined` |
 | `contentTypeParser`   | A function used to parse the content type of the request payload (if any) | `(data) => 'application/json; charset=UTF-8'` |
-| `responseParser`      | A function to extract the payload from the response   | `undefined` |
+| `responseDataParser`  | A function to extract the payload from the response   | `undefined` |
+| `responseMetaParser`  | A function to extract the meta details from the response (e.g. pagination data) | `undefined` |
+| `responseErrorParser`  | A function to extract the details from an error response | `undefined` |
 | `querystringRenderer` | A function to render the request querystring          | `undefined` |
 | `idempotentUpdate`    | If true, the `PUT` method will be used on update requests | `false`     |
 | `cache`               | An optional cache object to store request responses. Should implement the following API: `has(reqId)`, `get(reqId)`, `set(reqId,res)` | `undefined` |
