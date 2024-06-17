@@ -236,19 +236,22 @@ class RbDataProviderJsonServer extends RbDataProvider {
         if (res.ok) {
           return res.json();
         }
-        // Retry on failure
-        if (retries > 1 && retryCodes.includes(res.status)) {
-          return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
+          if (retries > 1 && retryCodes.includes(res.status)) {
+            // Retry on failure
             const retryRequest = () => {
               this._performRequest(url, options, retries - 1, _backoff * 2)
                 .then(resolve)
                 .catch(reject);
             };
             setTimeout(retryRequest, _backoff);
-          });
-        } else {
-          return Promise.reject(this.parseError(res));
-        }
+          } else {
+            // Handle final error
+            this.parseError(res)
+              .then(err => reject(err))
+              .catch(reject);
+          }
+        });
       })
       .then((res) => {
         if (this.cache) {
