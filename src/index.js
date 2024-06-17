@@ -11,12 +11,9 @@ class RbDataProviderJsonServer extends RbDataProvider {
       client = defaultClient,
       tokenGetter = null,
       contentTypeParser = (data) => "application/json; charset=UTF-8",
-      responseDataParser = (res) => res?.data || res,
-      responseMetaParser = (res) => res?.meta || {},
-      responseErrorParser = (res) =>
-        res
-          ? res.statusText || `request failed with status ${res.status}`
-          : null,
+      responseDataParser = (payload) => payload?.data || payload,
+      responseMetaParser = (payload) => payload?.meta || {},
+      responseErrorParser = (res) => res?.statusText || res?.status,
       querystringRenderer = renderQuerystring,
       idempotentUpdate = false,
       cache = null,

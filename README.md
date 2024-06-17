@@ -46,13 +46,13 @@ const provider = createProvider("https://jsonplaceholder.typicode.com", {
 | `timeout`             | The timeout (ms) for each single HTTP request attempt | `5000`      |
 | `retries`             | The number of attempts before failing                 | `3`         |
 | `backoff`             | The incremental delay (ms) between request attempts   | `500`       |
-| `client`              | The HTTP client used to perform the requests          | `fetch`     |
+| `client`              | A fetch-like HTTP client used to perform the requests | `fetch`     |
 | `tokenGetter`         | An async function to get the bearer token to be used  | `undefined` |
 | `contentTypeParser`   | A function used to parse the content type of the request payload (if any) | `(data) => 'application/json; charset=UTF-8'` |
-| `responseDataParser`  | A function to extract the payload from the response   | `undefined` |
-| `responseMetaParser`  | A function to extract the meta details from the response (e.g. pagination data) | `undefined` |
-| `responseErrorParser`  | A function to extract the details from an error response | `undefined` |
-| `querystringRenderer` | A function to render the request querystring          | `undefined` |
+| `responseDataParser`  | A sync function to extract the payload from the response payload | `(payload) => payload?.data \|\| payload` |
+| `responseMetaParser`  | A sync function to extract the meta details from the response payload (e.g. pagination data) | `(payload) => payload?.meta \|\| {}` |
+| `responseErrorParser`  | A (a)sync function to extract the details from an error response | `(res) => res?.statusText \|\| res?.status` |
+| `querystringRenderer` | A function to render the request querystring | Provided `renderQuerystring` function |
 | `idempotentUpdate`    | If true, the `PUT` method will be used on update requests | `false`     |
 | `cache`               | An optional cache object to store request responses. Should implement the following API: `has(reqId)`, `get(reqId)`, `set(reqId,res)` | `undefined` |
 
