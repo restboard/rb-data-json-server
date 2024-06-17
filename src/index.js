@@ -247,9 +247,8 @@ class RbDataProviderJsonServer extends RbDataProvider {
             setTimeout(retryRequest, _backoff);
           } else {
             // Handle final error
-            this.parseError(res)
-              .then(err => reject(err))
-              .catch(reject);
+            const err = this.parseError(res);
+            return !err?.then ? reject(err) : err.then(reject).catch(reject);
           }
         });
       })
